@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from enum import Enum
 from fastapi import Header
 from fastapi import Query
@@ -8,6 +8,9 @@ from typing import List
 from collections import OrderedDict
 
 app = FastAPI()
+
+items = [] #пустой список, который будем дальше пополнять
+#items = [{'pk': 0, 'name': 'anya', 'kind': 'dalmatian'}, {'pk': 1, 'name': 'string', 'kind': 'terrier'}, {'pk': 2, 'name': 'vasya', 'kind': 'bulldog'},]
 
 @app.get('/')
 async def root():
@@ -31,29 +34,35 @@ class Dog(BaseModel):
 
 @app.post('/dog')
 async def create_dog(dog: Dog):
-    dog.pk = 0
-    return dog
+    dog.pk = len(items)
+    items.append(dog)
+    return items
+
+
 
 @app.get('/dog')
 async def get_dogs(kind: DogType = None):
     if kind == None:
-        return {'message': kind}
+        return items
     else:
-        return {'dog': kind}
-
+        answer = []
+        for i in items:
+            if i.kind == kind:
+                answer.append(i)
+        return answer
 
 
 @app.get('/dog/{pk}')
 async def get_dog_by_pk(pk: int):
-    return OrderedDict([('pk', pk), ('name', 2), ('kind', 3)])
+    return items[pk]
 
 from fastapi.encoders import jsonable_encoder
 
 @app.patch('/dog/{pk}', response_model=Dog)
 async def update_dog(pk: int, dog: Dog):
-    data = {'dog': pk}
-    stored_model = Dog(**data)
+    stored_model = Dog(name=(items[pk]).name, pk=(items[pk]).pk, kind=(items[pk]).kind)
     updated_data = dog.dict(exclude_unset=True)
     updated_item = stored_model.copy(update=updated_data)
-    pk[pk] = jsonable_encoder(updated_item)
-    return updated_item
+    items[pk] = jsonable_encoder(stored_model)
+    return items
+
