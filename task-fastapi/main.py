@@ -5,6 +5,7 @@ from fastapi import Query
 from pydantic import BaseModel
 from typing import Union
 from typing import List
+from collections import OrderedDict
 
 app = FastAPI()
 
@@ -14,7 +15,7 @@ async def root():
 
 @app.post('/post')
 async def get_post():
-    return {'message': 'POST'}
+    return {'id': '0', 'timestamp': '0'}
 
 
 class DogType(str, Enum):
@@ -28,24 +29,23 @@ class Dog(BaseModel):
     pk: Union[int, None] = None
     kind: DogType
 
-
-@app.get('/dog')
-async def get_dogs(kind: DogType = None):
-    return {'result': DogType}
-
 @app.post('/dog')
 async def create_dog(dog: Dog):
     dog.pk = 0
     return dog
 
-@app.get('/dog/{pk}')
-async def get_dog_by_pk(pk):
-    print(pk)
-    return {'dog': pk}
+@app.get('/dog')
+async def get_dogs(kind: DogType = None):
+    if kind == None:
+        return {'message': kind}
+    else:
+        return {'dog': kind}
 
-@app.patch('/dog/{pk}')
-async def update_dog(pk):
-    return {'dog': pk}
+
+
+@app.get('/dog/{pk}')
+async def get_dog_by_pk(pk: int):
+    return OrderedDict([('pk', pk), ('name', 2), ('kind', 3)])
 
 from fastapi.encoders import jsonable_encoder
 
