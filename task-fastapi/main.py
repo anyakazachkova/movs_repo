@@ -38,7 +38,7 @@ class Dog(BaseModel):
 async def create_dog(dog: Dog):
     dog.pk = len(items)
     items.append(dog)
-    return items
+    return dog
 
 
 
