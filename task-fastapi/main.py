@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException
 from enum import Enum
 from fastapi import Header
 from fastapi import Query
@@ -6,11 +6,13 @@ from pydantic import BaseModel
 from typing import Union
 from typing import List
 from collections import OrderedDict
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+import json
 
 app = FastAPI()
 
 items = [] #пустой список, который будем дальше пополнять
-#items = [{'pk': 0, 'name': 'anya', 'kind': 'dalmatian'}, {'pk': 1, 'name': 'string', 'kind': 'terrier'}, {'pk': 2, 'name': 'vasya', 'kind': 'bulldog'},]
 
 @app.get('/')
 async def root():
@@ -54,9 +56,13 @@ async def get_dogs(kind: DogType = None):
 
 @app.get('/dog/{pk}')
 async def get_dog_by_pk(pk: int):
-    return items[pk]
+    if (pk < 0) or (pk > len(items)-1):
+        raise HTTPException(status_code=404, detail="Dog not found")
+    else:
+        dog_info = OrderedDict(pk = pk, name = items[pk].name, kind = items[pk].kind)
+        return dog_info
 
-from fastapi.encoders import jsonable_encoder
+
 
 @app.patch('/dog/{pk}', response_model=Dog)
 async def update_dog(pk: int, dog: Dog):
