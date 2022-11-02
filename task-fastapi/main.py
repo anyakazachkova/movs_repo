@@ -59,16 +59,20 @@ async def get_dog_by_pk(pk: int):
     if (pk < 0) or (pk > len(items)-1):
         raise HTTPException(status_code=404, detail="Dog not found")
     else:
-        dog_info = OrderedDict(pk = pk, name = items[pk].name, kind = items[pk].kind)
+        stored_dog_data = dict(items[pk])
+        dog_info = OrderedDict(pk = pk, name = stored_dog_data['name'], kind = stored_dog_data['kind'])
         return dog_info
 
 
 #Реализация обновления собаки по id
 @app.patch('/dog/{pk}')
 async def update_dog(pk: int, dog: Dog):
-    stored_dog_data = dict(items[pk])
-    stored_dog_model = Dog(name = stored_dog_data['name'], pk = pk, kind = stored_dog_data['kind'])
-    new_data = dog.dict(exclude_unset=True)
-    updated_dog = stored_dog_model.copy(update=new_data)
-    items[pk] = jsonable_encoder(updated_dog)
-    return updated_dog
+    if (pk < 0) or (pk > len(items)-1):
+        raise HTTPException(status_code=404, detail="Dog not found")    
+    else:
+        stored_dog_data = dict(items[pk])
+        stored_dog_model = Dog(name = stored_dog_data['name'], pk = pk, kind = stored_dog_data['kind'])
+        new_data = dog.dict(exclude_unset=True)
+        updated_dog = stored_dog_model.copy(update=new_data)
+        items[pk] = jsonable_encoder(updated_dog)
+        return updated_dog
