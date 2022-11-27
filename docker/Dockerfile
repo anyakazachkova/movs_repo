@@ -18,4 +18,4 @@ RUN useradd -ms /bin/bash deploy2022user
 
 USER deploy2022user
 
-CMD ["uvicorn", "--host", "0.0.0.0", "main:app"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8898", "main:app"]
