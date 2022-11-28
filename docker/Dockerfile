@@ -10,6 +10,8 @@ COPY main.py /main.py
 
 RUN echo "print('Hello')" > /bin/print_hello
 
+RUN chmod +x /bin/print_hello
+
 #RUN -python /bin/print_hello
 
 #ENTRYPOINT ["/bin/print_hello", "/bin", "-python", "print_hello.py"]
