@@ -6,7 +6,13 @@ RUN apt-get install -y git python3 python3-pip
 
 COPY main.py /main.py
 
-COPY print_hello /bin/print_hello
+#COPY print_hello.py /bin/print_hello.py
+
+RUN echo "print('Hello')" > /bin/print_hello
+
+#RUN -python /bin/print_hello
+
+#ENTRYPOINT ["/bin/print_hello", "/bin", "-python", "print_hello.py"]
 
 COPY README.md /README.md
 
