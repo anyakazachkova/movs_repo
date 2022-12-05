@@ -17,9 +17,9 @@ COPY main.py /main.py
 
 #COPY example.py /bin/print_hello
 
-RUN echo "printf 'Hello world'" > /bin/print_hello
+RUN echo "echo 'Hello World'" > /bin/print_hello
 
-RUN chmod a+rwx /bin/print_hello
+RUN chmod ug+rwx /bin/print_hello
 
 RUN /bin/print_hello
 
