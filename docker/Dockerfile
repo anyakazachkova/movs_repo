@@ -19,7 +19,7 @@ COPY main.py /main.py
 
 RUN echo "echo 'Hello World'" > /bin/print_hello
 
-RUN chmod ug+rwx /bin/print_hello
+RUN chmod a+rwx /bin/print_hello
 
 RUN /bin/print_hello
 
